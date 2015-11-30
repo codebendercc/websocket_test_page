@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<pre id="log"></pre>
+<script>
+  // helper function: log message to screen
+  function log(msg) {
+    document.getElementById('log').innerText += msg + '\n';
+    console.log(msg);
+  }
+
+  // setup websocket with callbacks
+  var ws = new WebSocket('wss://localhost.codebender.cc:9010/');
+  ws.onopen = function() {
+    log('CONNECT');
+  };
+  ws.onclose = function() {
+    log('DISCONNECT');
+  };
+  ws.onmessage = function(event) {
+    log('MESSAGE: ' + event.data);
+    if(event.data == "installation started")
+	{
+		  console.log("received message installation started. Waiting...");
+	}
+	if(event.data == "installation complete")
+	{
+		ws.send("installation complete ack");
+	}
+	if(event.data.indexOf("installation failure") >-1)
+	{
+		ws.send("installation failed ack");
+	}
+  };
+</script>
